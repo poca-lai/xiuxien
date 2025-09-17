@@ -137,6 +137,7 @@
 </label>
 
 <label>功法：
+  <br>
 <label class="checkbox-label">
   <input type="checkbox" name="gongfaExp" value="4">4
 </label>
@@ -167,7 +168,7 @@
     <input type="number" id="currentPower" value="0">
   </label>
 
-  <label>天罡/靈泉等級:
+  <!-- <label>天罡/靈泉等級:
     <select id="tiangangSelect">
       <option value="0">無</option>
       <option value="2">1: 2%</option>
@@ -176,32 +177,44 @@
       <option value="10">4: 10%</option>
       <option value="15">5: 15%</option>
     </select>
-  </label>
+  </label> -->
 
   <hr>
+<div>
+  <strong>水書：</strong>
+  <label><input type="checkbox" name="waterBook" value="3000">3000</label>
+  <label><input type="checkbox" name="waterBook" value="10000">10000</label>
+  <label><input type="checkbox" name="waterBook" value="15000">15000</label>
+  <label><input type="checkbox" name="waterBook" value="20000">20000</label>
+  <label><input type="checkbox" name="waterBook" value="30000">30000</label>
+  <label><input type="checkbox" name="waterBook" value="3">3%</label>
+  <label><input type="checkbox" name="waterBook" value="5">5%</label>
+</div>
 
-  <label>水/火/木書等級:
-    <select id="bookLevel">
-      <option value="0">0級</option>  
-      <option value="3000">1級</option>
-      <option value="10000">2級</option>
-      <option value="15000">3級</option>
-      <option value="20000">4級</option>
-      <option value="30000">5級</option>
-    </select>
-  </label>
+<div>
+  <strong>火書：</strong>
+  <label><input type="checkbox" name="fireBook" value="3000">3000</label>
+  <label><input type="checkbox" name="fireBook" value="10000">10000</label>
+  <label><input type="checkbox" name="fireBook" value="15000">15000</label>
+  <label><input type="checkbox" name="fireBook" value="20000">20000</label>
+  <label><input type="checkbox" name="fireBook" value="30000">30000</label>
+  <label><input type="checkbox" name="fireBook" value="3">3%</label>
+  <label><input type="checkbox" name="fireBook" value="5">5%</label>
+</div>
 
-<label>功法：
-  <label class="checkbox-label">
-    <input type="checkbox" name="gongfaPower" value="3">3%
-  </label>
-  <label class="checkbox-label">
-    <input type="checkbox" name="gongfaPower" value="5">5%
-  </label>
-</label>
+<div>
+  <strong>木書：</strong>
+  <label><input type="checkbox" name="woodBook" value="3000">3000</label>
+  <label><input type="checkbox" name="woodBook" value="10000">10000</label>
+  <label><input type="checkbox" name="woodBook" value="15000">15000</label>
+  <label><input type="checkbox" name="woodBook" value="20000">20000</label>
+  <label><input type="checkbox" name="woodBook" value="30000">30000</label>
+  <label><input type="checkbox" name="woodBook" value="3">3%</label>
+  <label><input type="checkbox" name="woodBook" value="5">5%</label>
+</div>
 
-  <button onclick="calculatePower()">計算預估戰力</button>
-  <div id="powerResult" style="margin-top:10px; font-weight:bold;"></div>
+<button onclick="calculatePowerBooks()">計算最高戰力</button>
+<div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
 </fieldset>
 <script>
 // 經驗表
@@ -368,38 +381,45 @@ function calculate() {
     const minutes = Math.round((totalHr - hours) * 60);
     const now = new Date();
     const finishTime = new Date(now.getTime() + totalTimeSec * 1000);
-    const finishHour = finishTime.getHours().toString().padStart(2, '0');
-    const finishMin = finishTime.getMinutes().toString().padStart(2, '0');
+    const finishYear = finishTime.getFullYear();
+    const finishMonth = (finishTime.getMonth()+1).toString().padStart(2,'0');
+    const finishDate = finishTime.getDate().toString().padStart(2,'0');
+    const finishHour = finishTime.getHours().toString().padStart(2,'0');
+    const finishMin = finishTime.getMinutes().toString().padStart(2,'0');
 
     document.getElementById('result').innerHTML =
         `總剩餘時間: ${hours}小時 ${minutes}分鐘<br>` +
-        `預估完成時間: ${finishHour}:${finishMin}`;
+        `預估完成時間: ${finishYear}-${finishMonth}-${finishDate} ${finishHour}:${finishMin}`;
 }
 
-function calculatePower() {
-    const currentPower = parseFloat(document.getElementById('currentPower').value) || 0;
-    const tiangangPercent = parseFloat(document.getElementById('tiangangSelect').value) || 0;
-    const bookExp = parseInt(document.getElementById('bookLevel').value) || 0;
+function calculatePowerBooks() {
+  const currentPower = parseFloat(document.getElementById('currentPower').value) || 0;
 
-    // 計算功法總百分比
-    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaPower"]:checked'))
-                               .map(cb => parseFloat(cb.value) || 0);
-    const gongfaPercent = checkedGongfa.reduce((a,b) => a + b, 0);
+  const attrs = [
+    { name: 'waterBook', emoji: '💦' },
+    { name: 'fireBook', emoji: '🔥' },
+    { name: 'woodBook', emoji: '🪵' }
+  ];
 
-    // 天罡加成 + 功法加成
-    const totalPowerAdd = currentPower * (tiangangPercent / 100) + (bookExp) + currentPower * (gongfaPercent / 100);
+  let results = [];
 
-    // 預估最高戰力
+  attrs.forEach(attr => {
+    const checked = Array.from(document.querySelectorAll(`input[name="${attr.name}"]:checked`))
+                         .map(cb => parseFloat(cb.value));
+
+    // 分開數值和百分比
+    let addExp = checked.filter(v => v >= 0 && v <= 30000).reduce((a,b)=>a+b, 0);
+    let addPercent = checked.filter(v => v === 3 || v === 5).reduce((a,b)=>a+b, 0);
+
+    // 計算最高戰力
+    const totalPowerAdd = addExp + currentPower * (addPercent / 100);
     const maxPower = Math.round((currentPower + totalPowerAdd) * 1.05 / 0.95);
 
-    // 預估最低戰力
-    const minPower = Math.round((currentPower + totalPowerAdd) * 0.95 / 1.05);
+    results.push(`${attr.emoji}最高戰力: ${maxPower}`);
+  });
 
-    document.getElementById('powerResult').innerHTML =
-        `最高預估戰力: ${maxPower}<br>` +
-        `最低預估戰力: ${minPower}`;
+  document.getElementById('powerBooksResult').innerHTML = results.join('<br>');
 }
-
 </script>
 
 </body>
