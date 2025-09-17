@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>經驗與戰力計算器</title>
+<title>修為與戰力計算器</title>
 <style>
   body { font-family: Arial, sans-serif; padding: 10px; max-width: 600px; margin: auto; }
   h2 { text-align: center; }
@@ -24,6 +24,18 @@
   button { cursor: pointer; margin-top: 15px; }
   #result, #powerResult { margin-top: 15px; font-weight: bold; }
   hr { margin: 15px 0; }
+
+  /* Checkbox 對齊樣式 */
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-top: 5px;
+  }
+  .checkbox-label input[type="checkbox"] {
+    margin-right: 5px; /* checkbox 與文字間距 */
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -46,9 +58,11 @@
   <label>目前經驗:
     <input type="number" id="currentExp" value="0">
   </label>
-  
+    <label>元氣丹補回:
+    <input type="number" id="exExp" value="0">
+  </label>
   <!-- 目標境界選擇 -->
-  <label>目標境界(後期):
+  <label>目標境界:
     <select id="targetSelect"></select>
   </label>
 
@@ -123,11 +137,21 @@
 </label>
 
 <label>功法：
-  <input type="checkbox" name="gongfa" value="4">4
-  <input type="checkbox" name="gongfa" value="5">5
-  <input type="checkbox" name="gongfa" value="11">11
-  <input type="checkbox" name="gongfa" value="12">12
-  <input type="checkbox" name="gongfa" value="18">18
+<label class="checkbox-label">
+  <input type="checkbox" name="gongfaExp" value="4">4
+</label>
+<label class="checkbox-label">
+  <input type="checkbox" name="gongfaExp" value="5">5
+</label>
+<label class="checkbox-label">
+  <input type="checkbox" name="gongfaExp" value="11">11
+</label>
+<label class="checkbox-label">
+  <input type="checkbox" name="gongfaExp" value="12">12
+</label>
+<label class="checkbox-label">
+  <input type="checkbox" name="gongfaExp" value="18">18
+</label>
 </label>
 
  <label>戰意：
@@ -168,8 +192,12 @@
   </label>
 
 <label>功法：
-  <input type="checkbox" name="gongfa" value="3">3%
-  <input type="checkbox" name="gongfa" value="5">5%
+  <label class="checkbox-label">
+    <input type="checkbox" name="gongfaPower" value="3">3%
+  </label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="gongfaPower" value="5">5%
+  </label>
 </label>
 
   <button onclick="calculatePower()">計算預估戰力</button>
@@ -277,6 +305,7 @@ function calculate() {
     let currentIndex = parseInt(stageSelect.value) * 3 + subStageSelect.selectedIndex;
     let targetIndex = parseInt(targetSelect.value) * 3 + 2; // 目標固定後期
     let currentExp = parseFloat(document.getElementById('currentExp').value);
+    let exExp = parseFloat(document.getElementById('exExp').value);
     let zhanyi = parseInt(document.getElementById('zhanyiInput').value);
     let totalTimeSec = 0;
 
@@ -287,7 +316,7 @@ function calculate() {
     const xuanming = parseInt(document.getElementById('xuanmingSelect').value);
     const qinmi = parseInt(document.getElementById('qinmiSelect').value);
 
-    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfa"]:checked'))
+    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaExp"]:checked'))
                                .map(cb => parseInt(cb.value));
 
     while (currentIndex <= targetIndex) {
@@ -319,7 +348,7 @@ function calculate() {
             else if (zhanyi <= 2000) zhanyiRate = 0.15;
             totalRate += stage.rate * zhanyiRate;
 
-            let remainExp = stage.exp - currentExp;
+            let remainExp = stage.exp - currentExp - exExp;
             if (totalRate <= 0) break;
 
             // 精準秒數計算
@@ -353,7 +382,7 @@ function calculatePower() {
     const bookExp = parseInt(document.getElementById('bookLevel').value) || 0;
 
     // 計算功法總百分比
-    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfa"]:checked'))
+    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaPower"]:checked'))
                                .map(cb => parseFloat(cb.value) || 0);
     const gongfaPercent = checkedGongfa.reduce((a,b) => a + b, 0);
 
