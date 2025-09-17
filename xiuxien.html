@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>經驗計算器</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; }
+label { display: block; margin-top: 10px; }
+select, input { margin-left: 5px; }
+#result { margin-top: 20px; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h2>修仙計算機</h2>
+<fieldset style="padding:10px; margin-bottom:20px;">
+  <legend>修為計算</legend>
+
+  <!-- 當前境界選擇 -->
+  <label>當前境界:
+    <select id="stageSelect"></select>
+  </label>
+  <label>當前階段進度:
+    <select id="subStageSelect">
+      <option value="前期">前期</option>
+      <option value="中期">中期</option>
+      <option value="後期">後期</option>
+    </select>
+  </label>
+  <label>目前經驗:
+    <input type="number" id="currentExp" value="0">
+  </label>
+  
+  <!-- 目標境界選擇 -->
+  <label>目標境界(後期):
+    <select id="targetSelect"></select>
+  </label>
+
+  <!-- 七種加成 + 親密加成 -->
+  <label>冰心：
+    <select id="bingxinSelect">
+      <option value="0">0</option>
+      <option value="1">1等</option>
+      <option value="2">3等</option>
+      <option value="3">5等</option>
+    </select>
+  </label>
+  <label>親密加成：
+    <select id="qinmiSelect">
+      <option value="0">0</option>
+      <option value="1">1人 5%</option>
+      <option value="2">2人 10%</option>
+      <option value="3">3人 15%</option>
+    </select>
+  </label>
+<label>聚靈丹：
+  <select id="julingdanSelect">
+    <option value="0">0顆</option>
+    <option value="1">1顆</option>
+    <option value="2">2顆</option>
+    <option value="3">3顆</option>
+    <option value="4">4顆</option>
+    <option value="5">5顆</option>
+    <option value="6">6顆</option>
+  </select>
+  持續時間(hr):
+  <select id="julingdanTime">
+    <option value="0">0</option>
+    <option value="0.5">0.5</option>
+    <option value="1">1</option>
+    <option value="1.5">1.5</option>
+    <option value="2">2</option>
+  </select>
+</label>
+
+<label>幽玄：
+  <select id="youxuanSelect">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</label>
+
+<label>天命：
+  <select id="tianmingSelect">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</label>
+
+<label>玄冥：
+  <select id="xuanmingSelect">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</label>
+
+<label>功法：
+  <input type="checkbox" name="gongfa" value="4">4
+  <input type="checkbox" name="gongfa" value="5">5
+  <input type="checkbox" name="gongfa" value="11">11
+  <input type="checkbox" name="gongfa" value="12">12
+  <input type="checkbox" name="gongfa" value="18">18
+</label>
+
+ <label>戰意：
+    <input type="number" id="zhanyiInput" value="0">
+  </label>
+
+  <button onclick="calculate()">計算升滿時間</button>
+  <div id="result"></div>
+<fieldset style="padding:10px;">
+  <legend>戰力計算</legend>
+  
+  <label>戰力:
+    <input type="number" id="currentPower" value="0">
+  </label>
+
+  <label>天罡/靈泉等級:
+    <select id="tiangangSelect">
+      <option value="0">無</option>
+      <option value="2">1: 2%</option>
+      <option value="5">2: 5%</option>
+      <option value="7">3: 7%</option>
+      <option value="10">4: 10%</option>
+      <option value="15">5: 15%</option>
+    </select>
+  </label>
+
+  <hr>
+
+  <label>水/火/木書等級:
+    <select id="bookLevel">
+      <option value="0">0級</option>  
+      <option value="3000">1級</option>
+      <option value="10000">2級</option>
+      <option value="15000">3級</option>
+      <option value="20000">4級</option>
+      <option value="30000">5級</option>
+    </select>
+  </label>
+
+<label>功法：
+  <input type="checkbox" name="gongfa" value="3">3%
+  <input type="checkbox" name="gongfa" value="5">5%
+</label>
+
+  <button onclick="calculatePower()">計算預估戰力</button>
+  <div id="powerResult" style="margin-top:10px; font-weight:bold;"></div>
+</fieldset>
+<script>
+// 經驗表
+const stages = [
+  { name: "1.凡人 前期", exp: 15, rate: 1 },
+  { name: "1.凡人 中期", exp: 25, rate: 1 },
+  { name: "1.凡人 後期", exp: 50, rate: 1 },
+  { name: "2.煉氣 前期", exp: 100, rate: 1 },
+  { name: "2.煉氣 中期", exp: 440, rate: 1 },
+  { name: "2.煉氣 後期", exp: 900, rate: 1 },
+  { name: "3.築基 前期", exp: 5400, rate: 3 },
+  { name: "3.築基 中期", exp: 13000, rate: 3 },
+  { name: "3.築基 後期", exp: 24150, rate: 3 },
+  { name: "4.結丹 前期", exp: 25000, rate: 5 },
+  { name: "4.結丹 中期", exp: 26000, rate: 5 },
+  { name: "4.結丹 後期", exp: 44625, rate: 5 },
+  { name: "5.元嬰 前期", exp: 48825, rate: 5 },
+  { name: "5.元嬰 中期", exp: 51240, rate: 5 },
+  { name: "5.元嬰 後期", exp: 54915, rate: 5 },
+  { name: "6.出竅 前期", exp: 56490, rate: 5 },
+  { name: "6.出竅 中期", exp: 59325, rate: 5 },
+  { name: "6.出竅 後期", exp: 61950, rate: 5 },
+  { name: "7.化神 前期", exp: 65415, rate: 5 },
+  { name: "7.化神 中期", exp: 68670, rate: 5 },
+  { name: "7.化神 後期", exp: 72135, rate: 5 },
+  { name: "8.合體 前期", exp: 75705, rate: 10 },
+  { name: "8.合體 中期", exp: 79485, rate: 10 },
+  { name: "8.合體 後期", exp: 166950, rate: 10 },
+  { name: "9.洞虛 前期", exp: 175350, rate: 10 },
+  { name: "9.洞虛 中期", exp: 183750, rate: 10 },
+  { name: "9.洞虛 後期", exp: 193200, rate: 10 },
+  { name: "10.大成 前期", exp: 202965, rate: 10 },
+  { name: "10.大成 中期", exp: 213150, rate: 10 },
+  { name: "10.大成 後期", exp: 223650, rate: 10 },
+  { name: "11.渡劫 前期", exp: 262500, rate: 10 },
+  { name: "11.渡劫 中期", exp: 283500, rate: 10 },
+  { name: "11.渡劫 後期", exp: 315000, rate: 10 },
+  { name: "12.人仙 前期", exp: 1050000, rate: 30 },
+  { name: "12.人仙 中期", exp: 861000, rate: 30 },
+  { name: "12.人仙 後期", exp: 903000, rate: 30 },
+  { name: "13.真仙 前期", exp: 924000, rate: 30 },
+  { name: "13.真仙 中期", exp: 945000, rate: 30 },
+  { name: "13.真仙 後期", exp: 950985, rate: 30 },
+  { name: "14.金仙 前期", exp: 968100, rate: 30 },
+  { name: "14.金仙 中期", exp: 985530, rate: 30 },
+  { name: "14.金仙 後期", exp: 1003275, rate: 30 },
+  { name: "15.上仙 前期", exp: 1020000, rate: 30 },
+  { name: "15.上仙 中期", exp: 1039500, rate: 30 },
+  { name: "15.上仙 後期", exp: 1058442, rate: 30 },
+  { name: "16.仙君 前期", exp: 2520000, rate: 50 },
+  { name: "16.仙君 中期", exp: 1890000, rate: 50 },
+  { name: "16.仙君 後期", exp: 1942500, rate: 50 },
+  { name: "17.仙尊 前期", exp: 2047500, rate: 50 },
+  { name: "17.仙尊 中期", exp: 2252250, rate: 50 },
+  { name: "17.仙尊 後期", exp: 2478000, rate: 50 },
+  { name: "18.仙帝 前期", exp: 6300000, rate: 100 },
+  { name: "18.仙帝 中期", exp: 7035000, rate: 100 },
+  { name: "18.仙帝 後期", exp: 7035000, rate: 100 },
+];
+
+const stageSelect = document.getElementById('stageSelect');
+const targetSelect = document.getElementById('targetSelect');
+const subStageSelect = document.getElementById('subStageSelect');
+const levels = [...new Set(stages.map(s => s.name.split(' ')[0]))];
+
+// 初始化下拉選單
+levels.forEach((lvl, i) => {
+    const option1 = document.createElement('option');
+    option1.value = i;
+    option1.text = lvl;
+    stageSelect.add(option1);
+
+    const option2 = document.createElement('option');
+    option2.value = i;
+    option2.text = lvl;
+    targetSelect.add(option2);
+});
+
+// 當前境界變化時，更新目標境界選單
+stageSelect.addEventListener('change', () => {
+    const currentVal = parseInt(stageSelect.value);
+
+    // 清空 targetSelect
+    targetSelect.innerHTML = '';
+
+    // 只加入 >= 當前境界的選項
+    levels.forEach((lvl, i) => {
+        if (i >= currentVal) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.text = lvl;
+            targetSelect.add(option);
+        }
+    });
+
+    // 預設選中與當前境界相同
+    targetSelect.value = currentVal;
+});
+// 計算函式（精準到分鐘）
+function calculate() {
+    let currentIndex = parseInt(stageSelect.value) * 3 + subStageSelect.selectedIndex;
+    let targetIndex = parseInt(targetSelect.value) * 3 + 2; // 目標固定後期
+    let currentExp = parseFloat(document.getElementById('currentExp').value);
+    let zhanyi = parseInt(document.getElementById('zhanyiInput').value);
+    let totalTimeSec = 0;
+
+    const bingxin = parseInt(document.getElementById('bingxinSelect').value);
+    const jdCount = parseInt(document.getElementById('julingdanSelect').value);
+    const youxuan = parseInt(document.getElementById('youxuanSelect').value);
+    const tianming = parseInt(document.getElementById('tianmingSelect').value);
+    const xuanming = parseInt(document.getElementById('xuanmingSelect').value);
+    const qinmi = parseInt(document.getElementById('qinmiSelect').value);
+
+    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfa"]:checked'))
+                               .map(cb => parseInt(cb.value));
+
+    while (currentIndex <= targetIndex) {
+        const stage = stages[currentIndex];
+        let rate = stage.rate;
+
+        if (bingxin > 0) rate += bingxin;
+        if (jdCount > 0) rate += stage.rate * (0.16 + 0.04 * (jdCount - 1));
+        rate += stage.rate * (youxuan * 0.01 + tianming * 0.01 + xuanming * 0.01);
+        checkedGongfa.forEach(val => {
+            if (val == 4 || val == 5) rate += stage.rate * 0.05;
+            else if (val == 11) rate += stage.rate * 0.15;
+            else if (val == 12) rate += stage.rate * 0.3;
+            else if (val == 18) rate += stage.rate * 0.7;
+        });
+
+        while (currentExp < stage.exp) {
+            let nowHour = new Date().getHours();
+            let totalRate = rate;
+
+            if (qinmi > 0 && nowHour >= 9) {
+                totalRate += stage.rate * 0.05 * qinmi;
+            }
+
+            let zhanyiRate = 0;
+            if (zhanyi >= 0 && zhanyi <= 500) zhanyiRate = 0.03;
+            else if (zhanyi <= 1000) zhanyiRate = 0.05;
+            else if (zhanyi <= 1500) zhanyiRate = 0.07;
+            else if (zhanyi <= 2000) zhanyiRate = 0.15;
+            totalRate += stage.rate * zhanyiRate;
+
+            let remainExp = stage.exp - currentExp;
+            if (totalRate <= 0) break;
+
+            // 精準秒數計算
+            let secToFull = remainExp / totalRate;
+            totalTimeSec += secToFull;
+            currentExp = stage.exp;
+
+            zhanyi = Math.max(0, zhanyi - (200 * secToFull / 3600));
+        }
+
+        currentIndex++;
+        currentExp = 0;
+    }
+
+    const totalHr = totalTimeSec / 3600;
+    const hours = Math.floor(totalHr);
+    const minutes = Math.round((totalHr - hours) * 60);
+    const now = new Date();
+    const finishTime = new Date(now.getTime() + totalTimeSec * 1000);
+    const finishHour = finishTime.getHours().toString().padStart(2, '0');
+    const finishMin = finishTime.getMinutes().toString().padStart(2, '0');
+
+    document.getElementById('result').innerHTML =
+        `總剩餘時間: ${hours}小時 ${minutes}分鐘<br>` +
+        `預估完成時間: ${finishHour}:${finishMin}`;
+}
+
+function calculatePower() {
+    const currentPower = parseFloat(document.getElementById('currentPower').value) || 0;
+    const tiangangPercent = parseFloat(document.getElementById('tiangangSelect').value) || 0;
+    const bookExp = parseInt(document.getElementById('bookLevel').value) || 0;
+
+    // 計算功法總百分比
+    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfa"]:checked'))
+                               .map(cb => parseFloat(cb.value) || 0);
+    const gongfaPercent = checkedGongfa.reduce((a,b) => a + b, 0);
+
+    // 天罡加成 + 功法加成
+    const totalPowerAdd = currentPower * (tiangangPercent / 100) + (bookExp) + currentPower * (gongfaPercent / 100);
+
+    // 預估最高戰力
+    const maxPower = Math.round((currentPower + totalPowerAdd) * 1.05 / 0.95);
+
+    // 預估最低戰力
+    const minPower = Math.round((currentPower + totalPowerAdd) * 0.95 / 1.05);
+
+    document.getElementById('powerResult').innerHTML =
+        `最高預估戰力: ${maxPower}<br>` +
+        `最低預估戰力: ${minPower}`;
+}
+
+</script>
+
+</body>
+</html>
