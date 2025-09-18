@@ -25,26 +25,26 @@
   #result, #powerResult { margin-top: 15px; font-weight: bold; }
   hr { margin: 15px 0; }
 
-  /* Checkbox 對齊樣式 */
-  .checkbox-label {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 10px;
-    margin-top: 5px;
+  /* 所有 checkbox 左右排列，每行兩個 */
+  .checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .checkbox-label input[type="checkbox"] {
-    margin-right: 5px; /* checkbox 與文字間距 */
-    vertical-align: middle;
+  .checkbox-container label {
+    width: 48%;
+    display: flex;
+    align-items: center;
   }
 </style>
 </head>
 <body>
 
 <h2>修仙計算機</h2>
+
 <fieldset style="padding:10px; margin-bottom:20px;">
   <legend>修為計算</legend>
 
-  <!-- 當前境界選擇 -->
   <label>當前境界:
     <select id="stageSelect"></select>
   </label>
@@ -58,16 +58,14 @@
   <label>目前經驗:
     <input type="number" id="currentExp" value="0">
   </label>
-    <label>元氣丹補回:
+  <label>元氣丹補回:
     <input type="number" id="exExp" value="0">
   </label>
-  <!-- 目標境界選擇 -->
   <label>目標境界:
     <select id="targetSelect"></select>
   </label>
 
-  <!-- 七種加成 + 親密加成 -->
-  <label>冰心：
+<label>冰心：
     <select id="bingxinSelect">
       <option value="0">0</option>
       <option value="1">1等</option>
@@ -161,6 +159,8 @@
 
   <button onclick="calculate()">計算升滿時間</button>
   <div id="result"></div>
+</fieldset>
+
 <fieldset style="padding:10px;">
   <legend>戰力計算</legend>
   
@@ -168,53 +168,48 @@
     <input type="number" id="currentPower" value="0">
   </label>
 
-  <!-- <label>天罡/靈泉等級:
-    <select id="tiangangSelect">
-      <option value="0">無</option>
-      <option value="2">1: 2%</option>
-      <option value="5">2: 5%</option>
-      <option value="7">3: 7%</option>
-      <option value="10">4: 10%</option>
-      <option value="15">5: 15%</option>
-    </select>
-  </label> -->
-
   <hr>
-<div>
-  <strong>水書：</strong>
-  <label><input type="checkbox" name="waterBook" value="3000">3000</label>
-  <label><input type="checkbox" name="waterBook" value="10000">10000</label>
-  <label><input type="checkbox" name="waterBook" value="15000">15000</label>
-  <label><input type="checkbox" name="waterBook" value="20000">20000</label>
-  <label><input type="checkbox" name="waterBook" value="30000">30000</label>
-  <label><input type="checkbox" name="waterBook" value="3">3%</label>
-  <label><input type="checkbox" name="waterBook" value="5">5%</label>
-</div>
+  <div>
+    <strong>水書：</strong>
+    <div class="checkbox-container">
+      <label><input type="checkbox" name="waterBook" value="3000">3000</label>
+      <label><input type="checkbox" name="waterBook" value="10000">10000</label>
+      <label><input type="checkbox" name="waterBook" value="15000">15000</label>
+      <label><input type="checkbox" name="waterBook" value="20000">20000</label>
+      <label><input type="checkbox" name="waterBook" value="30000">30000</label>
+      <label><input type="checkbox" name="waterBook" value="3">3%</label>
+      <label><input type="checkbox" name="waterBook" value="5">5%</label>
+    </div>
+  </div>
 
-<div>
-  <strong>火書：</strong>
-  <label><input type="checkbox" name="fireBook" value="3000">3000</label>
-  <label><input type="checkbox" name="fireBook" value="10000">10000</label>
-  <label><input type="checkbox" name="fireBook" value="15000">15000</label>
-  <label><input type="checkbox" name="fireBook" value="20000">20000</label>
-  <label><input type="checkbox" name="fireBook" value="30000">30000</label>
-  <label><input type="checkbox" name="fireBook" value="3">3%</label>
-  <label><input type="checkbox" name="fireBook" value="5">5%</label>
-</div>
+  <div>
+    <strong>火書：</strong>
+    <div class="checkbox-container">
+      <label><input type="checkbox" name="fireBook" value="3000">3000</label>
+      <label><input type="checkbox" name="fireBook" value="10000">10000</label>
+      <label><input type="checkbox" name="fireBook" value="15000">15000</label>
+      <label><input type="checkbox" name="fireBook" value="20000">20000</label>
+      <label><input type="checkbox" name="fireBook" value="30000">30000</label>
+      <label><input type="checkbox" name="fireBook" value="3">3%</label>
+      <label><input type="checkbox" name="fireBook" value="5">5%</label>
+    </div>
+  </div>
 
-<div>
-  <strong>木書：</strong>
-  <label><input type="checkbox" name="woodBook" value="3000">3000</label>
-  <label><input type="checkbox" name="woodBook" value="10000">10000</label>
-  <label><input type="checkbox" name="woodBook" value="15000">15000</label>
-  <label><input type="checkbox" name="woodBook" value="20000">20000</label>
-  <label><input type="checkbox" name="woodBook" value="30000">30000</label>
-  <label><input type="checkbox" name="woodBook" value="3">3%</label>
-  <label><input type="checkbox" name="woodBook" value="5">5%</label>
-</div>
+  <div>
+    <strong>木書：</strong>
+    <div class="checkbox-container">
+      <label><input type="checkbox" name="woodBook" value="3000">3000</label>
+      <label><input type="checkbox" name="woodBook" value="10000">10000</label>
+      <label><input type="checkbox" name="woodBook" value="15000">15000</label>
+      <label><input type="checkbox" name="woodBook" value="20000">20000</label>
+      <label><input type="checkbox" name="woodBook" value="30000">30000</label>
+      <label><input type="checkbox" name="woodBook" value="3">3%</label>
+      <label><input type="checkbox" name="woodBook" value="5">5%</label>
+    </div>
+  </div>
 
-<button onclick="calculatePowerBooks()">計算最高戰力</button>
-<div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
+  <button onclick="calculatePowerBooks()">計算最高戰力</button>
+  <div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
 </fieldset>
 <script>
 // 經驗表
@@ -313,84 +308,135 @@ stageSelect.addEventListener('change', () => {
     // 預設選中與當前境界相同
     targetSelect.value = currentVal;
 });
-// 計算函式（精準到分鐘）
+
 function calculate() {
-    let currentIndex = parseInt(stageSelect.value) * 3 + subStageSelect.selectedIndex;
-    let targetIndex = parseInt(targetSelect.value) * 3 + 2; // 目標固定後期
-    let currentExp = parseFloat(document.getElementById('currentExp').value);
-    let exExp = parseFloat(document.getElementById('exExp').value);
-    let zhanyi = parseInt(document.getElementById('zhanyiInput').value);
-    let totalTimeSec = 0;
+    let currentIndex = parseInt(stageSelect.value) * 3 + subStageSelect.selectedIndex;
+    let targetIndex = parseInt(targetSelect.value) * 3 + 2; // 目標固定後期
+    let currentExp = parseFloat(document.getElementById('currentExp').value) || 0;
+    let exExp = parseFloat(document.getElementById('exExp').value) || 0;
+    let zhanyi = parseInt(document.getElementById('zhanyiInput').value) || 0;
 
-    const bingxin = parseInt(document.getElementById('bingxinSelect').value);
-    const jdCount = parseInt(document.getElementById('julingdanSelect').value);
-    const youxuan = parseInt(document.getElementById('youxuanSelect').value);
-    const tianming = parseInt(document.getElementById('tianmingSelect').value);
-    const xuanming = parseInt(document.getElementById('xuanmingSelect').value);
-    const qinmi = parseInt(document.getElementById('qinmiSelect').value);
+    let totalExpNeeded = 0;
+    // 1. 計算當前境界到滿所需的經驗
+    totalExpNeeded += stages[currentIndex].exp - (currentExp + exExp);
+    // 2. 計算從下一個境界到目標境界滿所需的經驗
+    for (let i = currentIndex + 1; i <= targetIndex; i++) {
+        totalExpNeeded += stages[i].exp;
+    }
 
-    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaExp"]:checked'))
-                               .map(cb => parseInt(cb.value));
+    if (totalExpNeeded <= 0) {
+        document.getElementById('result').innerHTML = `已經達到目標境界！`;
+        return;
+    }
 
-    while (currentIndex <= targetIndex) {
-        const stage = stages[currentIndex];
-        let rate = stage.rate;
+    let totalTimeSec = 0;
+    let remainingExp = totalExpNeeded;
+    let remainingJDTime = parseFloat(document.getElementById('julingdanTime').value) * 3600; // 秒
+    let currentZhanyi = zhanyi;
+    let currentStageIndex = currentIndex;
 
-        if (bingxin > 0) rate += bingxin;
-        if (jdCount > 0) rate += stage.rate * (0.16 + 0.04 * (jdCount - 1));
-        rate += stage.rate * (youxuan * 0.01 + tianming * 0.01 + xuanming * 0.01);
-        checkedGongfa.forEach(val => {
-            if (val == 4 || val == 5) rate += stage.rate * 0.05;
-            else if (val == 11) rate += stage.rate * 0.15;
-            else if (val == 12) rate += stage.rate * 0.3;
-            else if (val == 18) rate += stage.rate * 0.7;
-        });
+    // 計算所有百分比加成 (固定加成)
+    let percentBonus = 0;
+    const youxuan = parseInt(document.getElementById('youxuanSelect').value);
+    const tianming = parseInt(document.getElementById('tianmingSelect').value);
+    const xuanming = parseInt(document.getElementById('xuanmingSelect').value);
+    const qinmi = parseInt(document.getElementById('qinmiSelect').value);
+    const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaExp"]:checked')).map(cb => parseInt(cb.value));
 
-        while (currentExp < stage.exp) {
-            let nowHour = new Date().getHours();
-            let totalRate = rate;
+    percentBonus += youxuan * 0.01 + tianming * 0.01 + xuanming * 0.01;
+    if (qinmi > 0) percentBonus += 0.05 * qinmi;
+    checkedGongfa.forEach(val => {
+        if (val == 4 || val == 5) percentBonus += 0.05;
+        else if (val == 11) percentBonus += 0.15;
+        else if (val == 12) percentBonus += 0.3;
+        else if (val == 18) percentBonus += 0.7;
+    });
+    
+    const jdCount = parseInt(document.getElementById('julingdanSelect').value);
+    let jdBonus = 0;
+    if (jdCount > 0) {
+        jdBonus = 0.2 + 0.04 * (jdCount - 1);
+    }
+    const bingxin = parseInt(document.getElementById('bingxinSelect').value);
+    
+    // 階段性計算經驗
+    while (remainingExp > 0 && currentStageIndex <= targetIndex) {
+        const baseRate = stages[currentStageIndex].rate;
+        let expForCurrentStage = (currentStageIndex === currentIndex) ? (stages[currentStageIndex].exp - (currentExp + exExp)) : stages[currentStageIndex].exp;
+        expForCurrentStage = Math.max(0, expForCurrentStage); // 確保不為負值
 
-            if (qinmi > 0 && nowHour >= 9) {
-                totalRate += stage.rate * 0.05 * qinmi;
-            }
+        while (expForCurrentStage > 0) {
+            // 計算當前的戰意加成
+            let zhanyiBonus = 0;
+            if (currentZhanyi > 0) {
+                if (currentZhanyi <= 500) zhanyiBonus = 0.03;
+                else if (currentZhanyi <= 1000) zhanyiBonus = 0.05;
+                else if (currentZhanyi <= 1500) zhanyiBonus = 0.07;
+                else if (currentZhanyi <= 2000) zhanyiBonus = 0.15;
+            }
 
-            let zhanyiRate = 0;
-            if (zhanyi >= 0 && zhanyi <= 500) zhanyiRate = 0.03;
-            else if (zhanyi <= 1000) zhanyiRate = 0.05;
-            else if (zhanyi <= 1500) zhanyiRate = 0.07;
-            else if (zhanyi <= 2000) zhanyiRate = 0.15;
-            totalRate += stage.rate * zhanyiRate;
+            // 計算當前的總經驗速率
+            let expRate = baseRate * (1 + percentBonus + zhanyiBonus) + bingxin;
+            if (remainingJDTime > 0) {
+                expRate = baseRate * (1 + percentBonus + jdBonus + zhanyiBonus) + bingxin;
+            }
 
-            let remainExp = stage.exp - currentExp - exExp;
-            if (totalRate <= 0) break;
+            // 計算這段時間需要多久
+            // 取決於聚靈丹剩餘時間、戰意降級時間，或完成此境界所需時間
+            const timeToNextZhanyiTier = (currentZhanyi - (Math.floor(currentZhanyi / 200) - 1) * 200) / (200 / 3600);
+            const timeChunk = Math.min(
+                remainingJDTime > 0 ? remainingJDTime : Infinity,
+                expForCurrentStage / expRate,
+                currentZhanyi > 0 ? 3600 : Infinity // 假設每小時整點扣除
+            );
 
-            // 精準秒數計算
-            let secToFull = remainExp / totalRate;
-            totalTimeSec += secToFull;
-            currentExp = stage.exp;
+            // 計算這段時間內獲得的經驗
+            const expGainedInChunk = expRate * timeChunk;
 
-            zhanyi = Math.max(0, zhanyi - (200 * secToFull / 3600));
-        }
+            // 更新數據
+            totalTimeSec += timeChunk;
+            expForCurrentStage -= expGainedInChunk;
+            remainingJDTime -= timeChunk;
+            
+            // 扣除戰意，並確保是每小時扣除
+            const hoursPassed = Math.floor(totalTimeSec / 3600);
+            const hoursBefore = Math.floor((totalTimeSec - timeChunk) / 3600);
+            if (hoursPassed > hoursBefore) {
+              currentZhanyi = Math.max(0, currentZhanyi - 200);
+            }
 
-        currentIndex++;
-        currentExp = 0;
-    }
+            if (expForCurrentStage <= 0) {
+                break; // 完成此境界
+            }
+        }
 
-    const totalHr = totalTimeSec / 3600;
-    const hours = Math.floor(totalHr);
-    const minutes = Math.round((totalHr - hours) * 60);
-    const now = new Date();
-    const finishTime = new Date(now.getTime() + totalTimeSec * 1000);
-    const finishYear = finishTime.getFullYear();
-    const finishMonth = (finishTime.getMonth()+1).toString().padStart(2,'0');
-    const finishDate = finishTime.getDate().toString().padStart(2,'0');
-    const finishHour = finishTime.getHours().toString().padStart(2,'0');
-    const finishMin = finishTime.getMinutes().toString().padStart(2,'0');
+        remainingExp -= stages[currentStageIndex].exp;
+        currentStageIndex++;
+    }
 
-    document.getElementById('result').innerHTML =
-        `總剩餘時間: ${hours}小時 ${minutes}分鐘<br>` +
-        `預估完成時間: ${finishYear}-${finishMonth}-${finishDate} ${finishHour}:${finishMin}`;
+    // 轉換時間
+    const hoursDuration = Math.floor(totalTimeSec / 3600);
+    const minutesDuration = Math.floor((totalTimeSec % 3600) / 60);
+
+    // 計算預計圓滿時間
+    const now = new Date();
+    const finalTime = new Date(now.getTime() + totalTimeSec * 1000);
+    const year = finalTime.getFullYear();
+    const month = (finalTime.getMonth() + 1).toString().padStart(2, '0');
+    const day = finalTime.getDate().toString().padStart(2, '0');
+    const hours = finalTime.getHours().toString().padStart(2, '0');
+    const minutes = finalTime.getMinutes().toString().padStart(2, '0');
+
+    document.getElementById('result').innerHTML =
+        `總需求經驗: ${Math.round(totalExpNeeded)}<br>` +
+        `預估所需時間: ${hoursDuration}小時 ${minutesDuration}分鐘<br>` +
+        `預計圓滿時間: ${year}年${month}月${day}日 ${hours}:${minutes}`;
 }
+
+
+
+
+
 
 function calculatePowerBooks() {
   const currentPower = parseFloat(document.getElementById('currentPower').value) || 0;
