@@ -12,8 +12,8 @@ body { font-family: Arial, sans-serif; padding: 10px; max-width: 900px; margin: 
 h2 { text-align: center; }
 fieldset { margin-top: 20px; padding: 10px; }
 label { display: block; margin-top: 10px; }
-select, input, button {
-margin-top: 5 px; 
+select, input, button { 
+margin-top: 5px; 
 padding: 8px; 
 font-size: 1em; 
 width: 100%; 
@@ -47,6 +47,13 @@ gap: 10px;
 flex: 1 1 calc(50% - 5px); /* 更穩定的兩欄佈局 */
 display: flex;
 align-items: center;
+/* 確保文字不被擠壓 */
+white-space: nowrap; 
+}
+/* 確保 checkbox 區塊的文字不會被 general label 樣式影響 */
+.checkbox-container input[type="checkbox"] {
+width: auto;
+margin-right: 5px;
 }
 
 @media (min-width: 768px) {
@@ -54,8 +61,8 @@ align-items: center;
 flex-wrap: nowrap;
 }
 .form-row > label {
- flex-grow: 1;
- flex-basis: 0;
+flex-grow: 1;
+flex-basis: 0;
 }
 }
 </style>
@@ -185,56 +192,67 @@ flex-wrap: nowrap;
   <button onclick="calculate()">計算升滿時間</button>
   <div id="result"></div>
 </fieldset>
-
 <fieldset style="padding:10px;">
-  <legend>戰力計算</legend>
-  
-  <label>戰力:
-    <input type="number" id="currentPower" value="0">
-  </label>
+  <legend>戰力計算</legend>
+  
+  <label>戰力:
+    <input type="number" id="currentPower" value="0">
+  </label>
 
-  <hr>
-  <div>
-    <strong>水書：</strong>
-    <div class="checkbox-container">
-      <label><input type="checkbox" name="waterBook" value="3000">3000</label>
-      <label><input type="checkbox" name="waterBook" value="10000">10000</label>
-      <label><input type="checkbox" name="waterBook" value="15000">15000</label>
-      <label><input type="checkbox" name="waterBook" value="20000">20000</label>
-      <label><input type="checkbox" name="waterBook" value="30000">30000</label>
-      <label><input type="checkbox" name="waterBook" value="3">3%</label>
-      <label><input type="checkbox" name="waterBook" value="5">5%</label>
-    </div>
-  </div>
+  <hr>
+  <div>
+    <strong>水書：</strong>
+    <div class="checkbox-container">
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="waterBook" value="3000">3000</label>
+        <label><input type="checkbox" name="waterBook" value="15000">15000</label>
+        <label><input type="checkbox" name="waterBook" value="30000">30000</label>
+        <label><input type="checkbox" name="waterBook" value="3">3%</label>
+      </div>
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="waterBook" value="10000">10000</label>
+        <label><input type="checkbox" name="waterBook" value="20000">20000</label>
+        <label><input type="checkbox" name="waterBook" value="5">5%</label>
+      </div>
+    </div>
+  </div>
 
-  <div>
-    <strong>火書：</strong>
-    <div class="checkbox-container">
-      <label><input type="checkbox" name="fireBook" value="3000">3000</label>
-      <label><input type="checkbox" name="fireBook" value="10000">10000</label>
-      <label><input type="checkbox" name="fireBook" value="15000">15000</label>
-      <label><input type="checkbox" name="fireBook" value="20000">20000</label>
-      <label><input type="checkbox" name="fireBook" value="30000">30000</label>
-      <label><input type="checkbox" name="fireBook" value="3">3%</label>
-      <label><input type="checkbox" name="fireBook" value="5">5%</label>
-    </div>
-  </div>
+  <div>
+    <strong>火書：</strong>
+    <div class="checkbox-container">
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="fireBook" value="3000">3000</label>
+        <label><input type="checkbox" name="fireBook" value="15000">15000</label>
+        <label><input type="checkbox" name="fireBook" value="30000">30000</label>
+        <label><input type="checkbox" name="fireBook" value="3">3%</label>
+      </div>
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="fireBook" value="10000">10000</label>
+        <label><input type="checkbox" name="fireBook" value="20000">20000</label>
+        <label><input type="checkbox" name="fireBook" value="5">5%</label>
+      </div>
+    </div>
+  </div>
 
-  <div>
-    <strong>木書：</strong>
-    <div class="checkbox-container">
-      <label><input type="checkbox" name="woodBook" value="3000">3000</label>
-      <label><input type="checkbox" name="woodBook" value="10000">10000</label>
-      <label><input type="checkbox" name="woodBook" value="15000">15000</label>
-      <label><input type="checkbox" name="woodBook" value="20000">20000</label>
-      <label><input type="checkbox" name="woodBook" value="30000">30000</label>
-      <label><input type="checkbox" name="woodBook" value="3">3%</label>
-      <label><input type="checkbox" name="woodBook" value="5">5%</label>
-    </div>
-  </div>
+  <div>
+    <strong>木書：</strong>
+    <div class="checkbox-container">
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="woodBook" value="3000">3000</label>
+        <label><input type="checkbox" name="woodBook" value="15000">15000</label>
+        <label><input type="checkbox" name="woodBook" value="30000">30000</label>
+        <label><input type="checkbox" name="woodBook" value="3">3%</label>
+      </div>
+      <div class="checkbox-column">
+        <label><input type="checkbox" name="woodBook" value="10000">10000</label>
+        <label><input type="checkbox" name="woodBook" value="20000">20000</label>
+        <label><input type="checkbox" name="woodBook" value="5">5%</label>
+      </div>
+    </div>
+  </div>
 
-  <button onclick="calculatePowerBooks()">計算最高戰力</button>
-  <div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
+  <button onclick="calculatePowerBooks()">計算最高戰力</button>
+  <div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
 </fieldset>
 
 
