@@ -4,39 +4,64 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>修為與戰力計算器</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 10px; max-width: 600px; margin: auto; }
-  h2 { text-align: center; }
-  fieldset { margin-top: 20px; padding: 10px; }
-  label { display: block; margin-top: 10px; }
-  select, input, button { 
-    margin-top: 5px; 
-    padding: 8px; 
-    font-size: 1em; 
-    width: 100%; 
-    box-sizing: border-box; 
-  }
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  button { cursor: pointer; margin-top: 15px; }
-  #result, #powerResult { margin-top: 15px; font-weight: bold; }
-  hr { margin: 15px 0; }
 
-  /* 所有 checkbox 左右排列，每行兩個 */
-  .checkbox-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .checkbox-container label {
-    width: 48%;
-    display: flex;
-    align-items: center;
-  }
+
+
+<style>
+body { font-family: Arial, sans-serif; padding: 10px; max-width: 900px; margin: auto; }
+h2 { text-align: center; }
+fieldset { margin-top: 20px; padding: 10px; }
+label { display: block; margin-top: 10px; }
+select, input, button {
+margin-top: 5 px; 
+padding: 8px; 
+font-size: 1em; 
+width: 100%; 
+box-sizing: border-box; 
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+button { cursor: pointer; margin-top: 15px; }
+#result, #powerResult { margin-top: 15px; font-weight: bold; }
+hr { margin: 15px 0; }
+
+.form-row {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin-bottom: 5px;
+}
+.form-row > label {
+flex: 1 1 45%;
+}
+/* 修正版：所有 checkbox 左右排列，每行兩個 */
+.checkbox-container {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+}
+.checkbox-container label {
+flex: 1 1 calc(50% - 5px); /* 更穩定的兩欄佈局 */
+display: flex;
+align-items: center;
+}
+
+@media (min-width: 768px) {
+.form-row {
+flex-wrap: nowrap;
+}
+.form-row > label {
+ flex-grow: 1;
+ flex-basis: 0;
+}
+}
 </style>
+
+
+
 </head>
 <body>
 
@@ -211,6 +236,9 @@
   <button onclick="calculatePowerBooks()">計算最高戰力</button>
   <div id="powerBooksResult" style="margin-top:10px; font-weight:bold;"></div>
 </fieldset>
+
+
+
 <script>
 // 經驗表
 const stages = [
