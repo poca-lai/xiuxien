@@ -190,7 +190,21 @@ flex-basis: 0;
 </div>
 </div>
 </label>
+<label>靈泉：
 
+      <div class="checkbox-container">
+      <div class="checkbox-column">
+<label class="checkbox">
+  <input type="checkbox" name="linbonus" value="1">有
+</label>
+</div>
+<div class="checkbox-column">
+<label class="checkbox">
+  <input type="checkbox" name="linbonus" value="0">無
+</label>
+</div>
+</div>
+</label>
 
  <label>戰意：
     <input type="number" id="zhanyiInput" value="0">
@@ -388,22 +402,23 @@ function calculate() {
     let currentStageIndex = currentIndex;
     let currentStageExp = currentExp + exExp;
     
-    // 計算所有百分比加成 (固定加成)
-    let percentBonus = 0;
+    // 計算所有百分比加成 (不包含親密度和靈泉)
+    let fixedPercentBonus = 0;
     const youxuan = parseInt(document.getElementById('youxuanSelect').value);
     const tianming = parseInt(document.getElementById('tianmingSelect').value);
     const xuanming = parseInt(document.getElementById('xuanmingSelect').value);
-    const qinmi = parseInt(document.getElementById('qinmiSelect').value);
     const checkedGongfa = Array.from(document.querySelectorAll('input[name="gongfaExp"]:checked')).map(cb => parseInt(cb.value));
-
-    percentBonus += youxuan * 0.01 + tianming * 0.01 + xuanming * 0.01;
-    if (qinmi > 0) percentBonus += 0.05 * qinmi;
+    
+    fixedPercentBonus += youxuan * 0.01 + tianming * 0.01 + xuanming * 0.01;
     checkedGongfa.forEach(val => {
-        if (val == 4 || val == 5) percentBonus += 0.05;
-        else if (val == 11) percentBonus += 0.15;
-        else if (val == 12) percentBonus += 0.3;
-        else if (val == 18) percentBonus += 0.7;
+        if (val == 4 || val == 5) fixedPercentBonus += 0.05;
+        else if (val == 11) fixedPercentBonus += 0.15;
+        else if (val == 12) fixedPercentBonus += 0.3;
+        else if (val == 18) fixedPercentBonus += 0.7;
     });
+
+    const qinmi = parseInt(document.getElementById('qinmiSelect').value);
+    const linbonusChecked = document.querySelector('input[name="linbonus"]:checked');
     
     const jdCount = parseInt(document.getElementById('julingdanSelect').value);
     let jdBonus = 0;
@@ -414,6 +429,9 @@ function calculate() {
 
     // 主迴圈：以分鐘為單位進行模擬
     let minutesPassed = 0;
+    const now = new Date();
+    let currentSimTime = now;
+    
     while (currentStageIndex <= targetIndex) {
         // 檢查當前境界是否已滿，如果滿了就升級
         if (currentStageExp >= stages[currentStageIndex].exp) {
@@ -427,8 +445,35 @@ function calculate() {
             currentZhanyi = Math.max(0, currentZhanyi - 200);
         }
 
+        // 檢查親密度加成是否生效 (21:00 ~ 23:59:59)
+        let qinmiBonus = 0;
+        const currentHour = currentSimTime.getHours();
+        if (qinmi > 0 && (currentHour >= 21 && currentHour < 24)) {
+             qinmiBonus = 0.05 * qinmi;
+        }
+
+        // 檢查靈泉加成是否生效 (11:10:01 ~ 23:10:01)
+        let linBonusValue = 0;
+        if (linbonusChecked && linbonusChecked.value === '1') {
+            const startHour = 11;
+            const startMin = 10;
+            const endHour = 23;
+            const endMin = 10;
+            const currentMinOfDay = currentHour * 60 + currentSimTime.getMinutes();
+            const startMinOfDay = startHour * 60 + startMin;
+            const endMinOfDay = endHour * 60 + endMin;
+
+            if (currentMinOfDay >= startMinOfDay && currentMinOfDay <= endMinOfDay) {
+                linBonusValue = stages[currentStageIndex].rate * 0.1 * 60; // 轉換成每分鐘的經驗值
+            }
+        }
+
+        // 計算當前的總百分比加成
+        let totalPercentBonus = fixedPercentBonus + qinmiBonus;
+
         // 計算當前的經驗速率 (每分鐘)
         const baseRatePerMin = stages[currentStageIndex].rate * 60;
+        const bingxinPerMin = bingxin * 60;
         let zhanyiBonus = 0;
         if (currentZhanyi > 0) {
             if (currentZhanyi <= 500) zhanyiBonus = 0.03;
@@ -437,9 +482,9 @@ function calculate() {
             else if (currentZhanyi <= 2000) zhanyiBonus = 0.15;
         }
 
-        let expRatePerMin = baseRatePerMin * (1 + percentBonus + zhanyiBonus) + bingxin * 60;
+        let expRatePerMin = baseRatePerMin * (1 + totalPercentBonus + zhanyiBonus) + bingxinPerMin + linBonusValue;
         if (remainingJDTimeMin > 0) {
-            expRatePerMin = baseRatePerMin * (1 + percentBonus + jdBonus + zhanyiBonus) + bingxin * 60;
+            expRatePerMin = baseRatePerMin * (1 + totalPercentBonus + jdBonus + zhanyiBonus) + bingxinPerMin + linBonusValue;
         }
         
         // 模擬這一分鐘的修煉
@@ -447,6 +492,7 @@ function calculate() {
         totalTimeMin++;
         remainingJDTimeMin--;
         minutesPassed++;
+        currentSimTime = new Date(currentSimTime.getTime() + 60 * 1000); // 模擬時間往前推一分鐘
     }
 
     // 轉換時間
@@ -454,7 +500,6 @@ function calculate() {
     const minutesDuration = totalTimeMin % 60;
 
     // 計算預計圓滿時間
-    const now = new Date();
     const finalTime = new Date(now.getTime() + totalTimeMin * 60 * 1000);
     const year = finalTime.getFullYear();
     const month = (finalTime.getMonth() + 1).toString().padStart(2, '0');
@@ -467,7 +512,6 @@ function calculate() {
         `預估所需時間: ${hoursDuration}小時 ${minutesDuration}分鐘<br>` +
         `預計圓滿時間: ${year}年${month}月${day}日 ${hours}:${minutes}`;
 }
-
 
 
 
