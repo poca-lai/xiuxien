@@ -537,8 +537,8 @@ function calculatePowerBooks() {
     let addPercent = checked.filter(v => v === 3 || v === 5).reduce((a,b)=>a+b, 0);
 
     // 計算最高戰力
-    const totalPowerAdd = addExp + currentPower * (addPercent / 100);
-    const maxPower = Math.round((currentPower + totalPowerAdd) * 1.05 / 0.95);
+    const totalPowerAdd = addExp + currentPower * (addPercent / 100) + currentPower;
+    const maxPower = Math.round(totalPowerAdd / 0.95);
 
     results.push(`${attr.emoji}最高戰力: ${maxPower}`);
   });
@@ -549,3 +549,4 @@ function calculatePowerBooks() {
 
 </body>
 </html>
+
