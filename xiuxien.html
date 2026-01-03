@@ -514,9 +514,6 @@ function calculate() {
 }
 
 
-
-
-
 function calculatePowerBooks() {
   const currentPower = parseFloat(document.getElementById('currentPower').value) || 0;
 
@@ -534,10 +531,10 @@ function calculatePowerBooks() {
 
     // 分開數值和百分比
     let addExp = checked.filter(v => v >= 0 && v <= 30000).reduce((a,b)=>a+b, 0);
-    let addPercent = checked.filter(v => v === 3 || v === 5).reduce((a,b)=>a+b, 0);
+    let addPercent = checked.filter(v => v === 3 || v === 5).reduce((a,b)=>a+b, 0); 
 
     // 計算最高戰力
-    const totalPowerAdd = addExp + currentPower * (addPercent / 100) + currentPower;
+    const totalPowerAdd = addExp + currentPower * ((100+addPercent+5) / 100) ;
     const maxPower = Math.round(totalPowerAdd / 0.95);
 
     results.push(`${attr.emoji}最高戰力: ${maxPower}`);
@@ -549,4 +546,5 @@ function calculatePowerBooks() {
 
 </body>
 </html>
+
 
